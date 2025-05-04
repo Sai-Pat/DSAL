@@ -1,72 +1,35 @@
 #include <iostream>
-#include <cstring>
 using namespace std;
 
-class Graph {
-    int V;
-    int** adj;
+int graph[10][10], visited[10], n;
 
-public:
-    Graph(int V);
-    void addEdge(int u, int v, int cost);
-    bool isConnected();
-    void DFS(int v, bool visited[]);
-};
-
-Graph::Graph(int V) {
-    this->V = V;
-    adj = new int*[V];
-    for (int i = 0; i < V; i++) {
-        adj[i] = new int[V];
-        for (int j = 0; j < V; j++) {
-            adj[i][j] = 0;
-        }
-    }
-}
-
-void Graph::addEdge(int u, int v, int cost) {
-    adj[u][v] = cost;
-    adj[v][u] = cost;
-}
-
-void Graph::DFS(int v, bool visited[]) {
-    visited[v] = true;
-    for (int i = 0; i < V; i++) {
-        if (adj[v][i] != 0 && !visited[i]) {
-            DFS(i, visited);
-        }
-    }
-}
-
-bool Graph::isConnected() {
-    bool* visited = new bool[V];
-    memset(visited, false, sizeof(bool) * V);
-
-    DFS(0, visited);
-
-    for (int i = 0; i < V; i++) {
-        if (!visited[i]) {
-            return false;
-        }
-    }
-    return true;
+void dfs(int node) {
+    visited[node] = 1;
+    for (int i = 0; i < n; i++)
+        if (graph[node][i] && !visited[i])
+            dfs(i);
 }
 
 int main() {
-    int V = 5;
-    Graph g(V);
-
-    g.addEdge(0, 1, 50);
-    g.addEdge(0, 2, 100);
-    g.addEdge(1, 3, 200);
-    g.addEdge(2, 3, 150);
-    g.addEdge(3, 4, 250);
-
-    if (g.isConnected()) {
-        cout << "The graph is connected." << endl;
-    } else {
-        cout << "The graph is not connected." << endl;
+    int edges, u, v, cost;
+    cout << "Enter number of cities and flights: ";
+    cin >> n >> edges;
+    
+    for (int i = 0; i < edges; i++) {
+        cin >> u >> v >> cost;
+        graph[u][v] = graph[v][u] = cost; // undirected graph with cost
     }
+
+    dfs(0); // start from first city
+
+    int connected = 1;
+    for (int i = 0; i < n; i++)
+        if (!visited[i]) connected = 0;
+
+    if (connected)
+        cout << "Graph is Connected\n";
+    else
+        cout << "Graph is Not Connected\n";
 
     return 0;
 }
