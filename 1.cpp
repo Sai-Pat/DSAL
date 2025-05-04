@@ -4,22 +4,18 @@ using namespace std;
 class Graph {
 public:
     int V;
-    int **adjMatrix;
+    int adjMatrix[10][10]; // fixed size for simplicity
 
     Graph(int vertices) {
         V = vertices;
-        adjMatrix = new int*[V];
-        for (int i = 0; i < V; i++) {
-            adjMatrix[i] = new int[V];
-            for (int j = 0; j < V; j++) {
+        for (int i = 0; i < V; i++)
+            for (int j = 0; j < V; j++)
                 adjMatrix[i][j] = 0;
-            }
-        }
     }
 
     void addEdge(int u, int v) {
         adjMatrix[u][v] = 1;
-        adjMatrix[v][u] = 1;
+        adjMatrix[v][u] = 1; // undirected
     }
 
     void DFS(int v, bool visited[]) {
@@ -33,10 +29,7 @@ public:
     }
 
     void performDFS(int startVertex) {
-        bool* visited = new bool[V];
-        for (int i = 0; i < V; i++) {
-            visited[i] = false;
-        }
+        bool visited[10] = {false}; // assumes max 10 vertices
         cout << "DFS starting from vertex " << startVertex << ": ";
         DFS(startVertex, visited);
         cout << endl;
@@ -50,6 +43,7 @@ int main() {
     g.addEdge(1, 3);
     g.addEdge(1, 4);
     g.addEdge(2, 3);
+
     g.performDFS(0);
     return 0;
 }
