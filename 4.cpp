@@ -2,16 +2,16 @@
 #include <queue>
 using namespace std;
 
+const int MAX_VERTICES = 100; // Set a limit for maximum number of vertices
+
 class Graph {
 public:
     int V;
-    int** adjMatrix;
+    int adjMatrix[MAX_VERTICES][MAX_VERTICES];
 
     Graph(int vertices) {
         V = vertices;
-        adjMatrix = new int*[V];
         for (int i = 0; i < V; i++) {
-            adjMatrix[i] = new int[V];
             for (int j = 0; j < V; j++) {
                 adjMatrix[i][j] = 0; // Initialize all edges to 0
             }
@@ -24,28 +24,26 @@ public:
     }
 
     void BFS(int startVertex) {
-        bool* visited = new bool[V];
-        for (int i = 0; i < V; i++) {
-            visited[i] = false; // Mark all vertices as not visited
-        }
+        bool visited[MAX_VERTICES] = {false}; // Local static-sized array
         recursiveBFS(startVertex, visited);
         cout << endl;
     }
 
     void recursiveBFS(int vertex, bool* visited) {
-        // Base case: if all nodes have been visited, stop recursion
         static queue<int> q;
-        if (q.empty()) {
+        static bool initialized = false;
+
+        if (!initialized) {
             q.push(vertex);
             visited[vertex] = true;
+            initialized = true;
         }
 
         if (!q.empty()) {
             vertex = q.front();
             q.pop();
             cout << vertex << " ";
-            
-            // Add all unvisited adjacent vertices to the queue
+
             for (int i = 0; i < V; i++) {
                 if (adjMatrix[vertex][i] == 1 && !visited[i]) {
                     visited[i] = true;
@@ -53,8 +51,12 @@ public:
                 }
             }
 
-            // Recursive call to continue processing the next vertex in the queue
             recursiveBFS(vertex, visited);
+        }
+
+        // Reset static variables after completion to allow reuse
+        if (q.empty()) {
+            initialized = false;
         }
     }
 };
